@@ -81,7 +81,7 @@ snapbase/
 ### 2️⃣ Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/snapbase.git
+git clone https://github.com/Prateekkp/SnapBase.git
 cd snapbase
 ```
 
