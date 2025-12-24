@@ -201,21 +201,3 @@ Built with engineering discipline & curiosity.
 
 > If you find this useful, ⭐ the repo — it helps a lot.
 
----
-
-## 🪖 Final Advice
-
-This README:
-- Explains **what** SnapBase does
-- Explains **what it does NOT do**
-- Sets **correct expectations**
-- Looks professional on GitHub
-- Is interview-ready
-
-If you want next, I can:
-- Write **resume bullet points**
-- Prepare **interview Q&A**
-- Add **architecture diagram**
-- Help you publish to **PyPI**
-
-Just tell me the next move.
