@@ -1,14 +1,14 @@
 from utils.separators import sep
 from utils.intent import is_direct_sql
 from llm.propmt import build_prompt
-from llm.generator import generate_sql
+from llm.generator import generate_sql, generate_sql_with_ollama, test_ollama_connection
 from db.executor import execute_query
 from utils.sql_cleaner import extract_sql
 from utils.formatter import print_table
 
 
 
-def start_cli(conn, schema, api_key):
+def start_cli(conn, schema, api_key, llm_provider="nvidia"):
     while True:
         sep()
         user_input = input("SnapBase> ").strip()
@@ -28,7 +28,12 @@ def start_cli(conn, schema, api_key):
         # ---------- CASE 2: Natural Language ----------
         else:
             print("Detected natural language input")
-            raw_output = generate_sql(build_prompt(user_input, schema), api_key)
+            
+            # Use appropriate LLM based on provider
+            if llm_provider == "ollama":
+                raw_output = generate_sql_with_ollama(build_prompt(user_input, schema))
+            else:  # NVIDIA provider
+                raw_output = generate_sql(build_prompt(user_input, schema), api_key)
 
             sql = extract_sql(raw_output)
             if not sql:

@@ -2,3 +2,4 @@ mysql-connector-python
 requests
 python-dotenv
 tabulate
+# Ollama integration uses the same requests library

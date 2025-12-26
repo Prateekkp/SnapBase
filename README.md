@@ -3,7 +3,7 @@
 ![Python](https://img.shields.io/badge/Python-3.9%2B-blue)
 ![MySQL](https://img.shields.io/badge/MySQL-Compatible-orange)
 ![CLI](https://img.shields.io/badge/Interface-CLI-green)
-![AI](https://img.shields.io/badge/AI-NVIDIA%20LLaMA--4-purple)
+![AI](https://img.shields.io/badge/AI-NVIDIA%20LLaMA--4%20%7C%20Ollama-purple)
 ![Status](https://img.shields.io/badge/Status-Production%20Ready-success)
 
 <p align="center">
@@ -17,7 +17,7 @@
 ## ✨ Key Features
 
 ✅ Run directly from terminal using `snapbase`  
-✅ Natural language → SQL using **NVIDIA LLaMA-4 (Maverick)**  
+✅ Natural language → SQL using **NVIDIA LLaMA-4 (Maverick)** or **Ollama (local)**  
 ✅ Direct SQL execution supported (`SHOW TABLES`, `SELECT`, etc.)  
 ✅ Schema-aware (prevents hallucinated tables/columns)  
 ✅ Blocks destructive queries (`DROP`, `DELETE`, `TRUNCATE`, …)  
@@ -42,6 +42,23 @@ Most AI SQL tools:
 - Honest about limitations
 - Designed like a real production CLI tool
 
+## 🤖 LLM Provider Options
+
+SnapBase now supports **dual LLM providers** for maximum flexibility:
+
+**NVIDIA LLaMA-4 (Cloud)**
+- Powered by NVIDIA's cloud-based LLaMA-4 Maverick model
+- Requires NVIDIA API key
+- Best for complex queries requiring cloud compute
+
+**Ollama (Local)**
+- Runs completely locally on your machine
+- No API key required
+- Better privacy and no network dependency
+- Requires Ollama to be installed and running
+
+Switch between providers using the new "Manage LLM Provider" option in the main menu.
+
 ---
 
 ## 📦 Project Structure
@@ -53,7 +70,7 @@ snapbase/
 │   ├── main.py            # Entry point
 │   ├── app/               # CLI & banner
 │   ├── db/                # DB connection & execution
-│   ├── llm/               # NVIDIA LLM integration
+│   ├── llm/               # NVIDIA & Ollama LLM integration
 │   ├── safety/            # Guardrails & validation
 │   └── utils/             # Helpers (formatting, intent)
 │
@@ -70,7 +87,7 @@ snapbase/
 
 * Python **3.9+**
 * MySQL server running
-* NVIDIA API Key (NIM / LLaMA-4)
+* NVIDIA API Key (NIM / LLaMA-4) OR Ollama installed and running locally
 
 ---
 
@@ -159,7 +176,7 @@ Only **read-safe analytical queries** are allowed by default.
 * **Python**
 * **MySQL**
 * **mysql-connector-python**
-* **NVIDIA LLaMA-4 Maverick**
+* **NVIDIA LLaMA-4 Maverick** (Cloud) / **Ollama** (Local)
 * **Requests**
 * **Tabulate**
 

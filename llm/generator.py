@@ -1,4 +1,5 @@
 import requests
+from typing import Optional
 
 NVIDIA_URL = "https://integrate.api.nvidia.com/v1/chat/completions"
 
@@ -51,3 +52,15 @@ def generate_sql(prompt, api_key):
     except Exception as e:
         print(f"❌ LLM error: {e}")
         return None
+
+
+def test_ollama_connection():
+    """Test if Ollama is running and accessible"""
+    from .ollama_generator import test_ollama_connection as ollama_test
+    return ollama_test()
+
+
+def generate_sql_with_ollama(prompt: str, model: str = "llama2") -> Optional[str]:
+    """Generate SQL using Ollama"""
+    from .ollama_generator import generate_sql_with_ollama as ollama_generate
+    return ollama_generate(prompt, model)
