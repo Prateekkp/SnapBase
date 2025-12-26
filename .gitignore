@@ -1,41 +1,63 @@
+```
+# Python
 __pycache__/
-*.py[cod]
-*$py.class
-*.so
+*.pyc
+*.pyo
+*.pyd
 .Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-
-# Virtual environments
-venv/
-ENV/
 env/
-.venv
+venv/
+.venv/
+.venv-*/
+.ENV
+.env
+.env.*
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
 
-# IDE
+# Build artifacts
+build/
+dist/
+*.egg
+*.egg-info/
+*.so
+*.o
+*.obj
+*.out
+
+# Logs
+*.log
+
+# Editor/IDE
 .vscode/
 .idea/
 *.swp
 *.swo
+*.tmp
 
-# Config and secrets
-snapbase_config.json
-.env
-.env.local
-
-# OS
+# System
 .DS_Store
 Thumbs.db
+
+# Coverage
+coverage/
+htmlcov/
+.coverage
+
+# Distribution / packaging
+.Python
+env/
+venv/
+.venv/
+.venv-*/
+.ENV
+.env
+.env.*
+.env.local
+
+# Testing
+.pytest_cache/
+.coverage
+```

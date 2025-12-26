@@ -1,6 +1,6 @@
 from app.banner import show_banner
 from config.store import load_config, save_config
-from llm.generator import test_api_key
+from llm.generator import test_api_key, test_ollama_connection, generate_sql_with_ollama
 from db.connection import connect_server, connect_database
 from db.schema import list_databases, get_database_schema
 from app.cli import start_cli
@@ -55,6 +55,10 @@ def main():
     show_banner()
     config = load_config()
 
+    # Set default LLM provider if not set
+    if "llm_provider" not in config:
+        config["llm_provider"] = "nvidia"  # Default to NVIDIA
+
     # ---------- MAIN MENU ----------
     while True:
         print("\n" + "="*50)
@@ -62,14 +66,18 @@ def main():
         print("="*50)
         print("1. Start SnapBase (Query Database)")
         print("2. Manage API Key")
-        print("3. Manage DB Profiles")
-        print("4. Exit")
+        print("3. Manage LLM Provider")
+        print("4. Manage DB Profiles")
+        print("5. Exit")
         
-        main_choice = input("\nSelect option (1-4): ").strip()
+        main_choice = input("\nSelect option (1-5): ").strip()
         
         if main_choice == "1":
-            if not config.get("api_key"):
-                print("❌ API key not configured. Please set it up first.")
+            if not config.get("api_key") and config.get("llm_provider") == "nvidia":
+                print("❌ NVIDIA API key not configured. Please set it up first.")
+                continue
+            if config.get("llm_provider") == "ollama" and not test_ollama_connection():
+                print("❌ Ollama not running. Please start Ollama first.")
                 continue
             start_snapbase(config)
             
@@ -77,9 +85,12 @@ def main():
             manage_api_key(config)
             
         elif main_choice == "3":
-            manage_profiles(config)
+            manage_llm_provider(config)
             
         elif main_choice == "4":
+            manage_profiles(config)
+            
+        elif main_choice == "5":
             print("👋 Goodbye!")
             return
         else:
@@ -129,6 +140,41 @@ def manage_api_key(config):
                     print("❌ Deletion cancelled")
                     
         elif choice == "4":
+            break
+        else:
+            print("⚠️ Invalid option, try again")
+
+
+def manage_llm_provider(config):
+    """Manage LLM Provider operations"""
+    while True:
+        print("\n" + "="*50)
+        print("LLM PROVIDER MANAGEMENT")
+        print("="*50)
+        current_provider = config.get("llm_provider", "nvidia")
+        print(f"Current LLM Provider: {current_provider.upper()}")
+        print("\nAvailable providers:")
+        print("1. NVIDIA (requires API key)")
+        print("2. Ollama (runs locally)")
+        print("3. Back to Main Menu")
+        
+        choice = input("\nSelect option (1-3): ").strip()
+        
+        if choice == "1":
+            config["llm_provider"] = "nvidia"
+            save_config(config)
+            print("✔ LLM provider set to NVIDIA")
+            
+        elif choice == "2":
+            if not test_ollama_connection():
+                print("❌ Ollama is not running. Please start Ollama first.")
+                print("Run 'ollama serve' in a terminal to start the Ollama service.")
+            else:
+                config["llm_provider"] = "ollama"
+                save_config(config)
+                print("✔ LLM provider set to Ollama")
+                
+        elif choice == "3":
             break
         else:
             print("⚠️ Invalid option, try again")
@@ -246,7 +292,7 @@ def use_profile(config, profile_idx):
     
     # Start CLI with database switching capability
     while True:
-        action = start_cli(conn, schema, config.get("api_key"))
+        action = start_cli(conn, schema, config.get("api_key"), config.get("llm_provider", "nvidia"))
         if action != "SWITCH_DB":
             break
         
