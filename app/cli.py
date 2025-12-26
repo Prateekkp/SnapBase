@@ -5,6 +5,7 @@ from llm.generator import generate_sql
 from db.executor import execute_query
 from utils.sql_cleaner import extract_sql
 from utils.formatter import print_table
+from utils.sql_validator import validate_multiple_queries
 
 
 
@@ -32,14 +33,29 @@ def start_cli(conn, schema, api_key):
 
             sql = extract_sql(raw_output)
             if not sql:
-                print("❌ Could not extract valid SQL from LLM output.")
-                print("LLM response was:")
-                print(raw_output)
+                if raw_output is None:
+                    print("\n💡 TIP: You can use direct SQL commands instead:")
+                    print("   • SHOW TABLES;")
+                    print("   • SHOW DATABASES;")
+                    print("   • DESCRIBE table_name;")
+                    print("   • SELECT * FROM table_name LIMIT 10;")
+                else:
+                    print("❌ Could not extract valid SQL from LLM output.")
+                    print("LLM response was:")
+                    print(raw_output)
                 continue
 
         print("\nGenerated SQL:")
         print(sql)
         sep()
+
+        # ✋ SECURITY CHECK: Validate all SQL statements before execution
+        is_valid, error_msg = validate_multiple_queries(sql)
+        if not is_valid:
+            print(f"🚫 SECURITY BLOCK: {error_msg}")
+            print("\n⚠️  Only read-only queries (SELECT, SHOW, DESCRIBE, EXPLAIN) are allowed.")
+            print("    Destructive operations (DROP, DELETE, UPDATE, INSERT, etc.) are blocked.")
+            continue
 
         # Split multiple SQL statements and execute each
         sql_statements = [s.strip() for s in sql.split(";") if s.strip()]

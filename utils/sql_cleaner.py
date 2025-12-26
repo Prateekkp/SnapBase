@@ -9,9 +9,11 @@ def extract_sql(text: str) -> str | None:
     if match:
         return match.group(1).strip()
 
-    # Case 2: Starts directly with SQL keyword
+    # Case 2: Starts directly with safe SQL keyword (READ-ONLY)
     text = text.strip()
-    for kw in ("select", "show", "describe", "desc", "explain"):
+    # ✋ SECURITY: Only allow safe, read-only SQL keywords
+    safe_keywords = ("select", "show", "describe", "desc", "explain", "with")
+    for kw in safe_keywords:
         if text.lower().startswith(kw):
             return text
 
