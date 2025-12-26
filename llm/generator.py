@@ -16,7 +16,7 @@ def test_api_key(api_key):
         print(f"❌ API key validation error: {e}")
         return False
 
-def generate_sql(prompt, api_key):
+def generate_sql(prompt, api_key, retry_count=0):
     try:
         headers = {
             "Authorization": f"Bearer {api_key}",
@@ -45,8 +45,28 @@ def generate_sql(prompt, api_key):
     except requests.exceptions.HTTPError as e:
         if e.response.status_code == 401:
             print("❌ LLM error: Invalid API key")
+        elif e.response.status_code == 403:
+            print("❌ LLM error: Access forbidden (403)")
+            print("   Possible reasons:")
+            print("   • API key doesn't have access to this model")
+            print("   • NVIDIA API quota or rate limit exceeded")
+            print("   • Request may be too large")
+            print("   💡 TIP: Try using direct SQL commands instead")
+            print("      Example: SHOW TABLES; or SELECT * FROM table_name;")
+        elif e.response.status_code == 429:
+            print("❌ LLM error: Rate limit exceeded (429)")
+            print("   💡 Please wait a moment and try again")
+            print("   💡 Or use direct SQL: SHOW TABLES;")
         else:
             print(f"❌ LLM error: HTTP {e.response.status_code}")
+            try:
+                error_detail = e.response.json()
+                if "detail" in error_detail:
+                    print(f"   Detail: {error_detail['detail']}")
+                elif "error" in error_detail:
+                    print(f"   Error: {error_detail['error']}")
+            except:
+                pass
         return None
     except Exception as e:
         print(f"❌ LLM error: {e}")
