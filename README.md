@@ -49,16 +49,19 @@ Most AI SQL tools:
 ```text
 snapbase/
 │
-├── snapbase/
-│   ├── main.py            # Entry point
-│   ├── app/               # CLI & banner
-│   ├── db/                # DB connection & execution
-│   ├── llm/               # NVIDIA LLM integration
-│   ├── safety/            # Guardrails & validation
-│   └── utils/             # Helpers (formatting, intent)
-│
-├── pyproject.toml         # CLI packaging config
-├── snapbase_config.json   # Saved API key & DB profiles
+├── app/                 # CLI & banner
+├── config/              # Config store
+├── db/                  # DB connection & execution
+├── images/              # Screenshots
+├── llm/                 # NVIDIA LLM integration
+├── utils/               # Helpers (formatting, intent)
+├── install.bat          # Windows setup helper
+├── install.sh           # Unix setup helper
+├── main.py              # Entry point
+├── pyproject.toml       # CLI packaging config
+├── requirements.txt     # Runtime dependencies
+├── snapbase_config.json # Saved API key & DB profiles
+├── TROUBLESHOOTING.md   # Common fixes
 └── README.md
 ```
 
