@@ -7,7 +7,7 @@
 ![Status](https://img.shields.io/badge/Status-Production%20Ready-success)
 
 <p align="center">
-  <img src="images/output-1.png" alt="SnapBase SQL Logo" width="480"/>
+  <img src="images/preview.png" alt="SnapBase SQL Logo" width="480"/>
 </p>
 
 > **SnapBase** is a terminal-based, AI-assisted SQL tool that lets you query MySQL databases using **natural language or raw SQL**, with strong **safety guardrails**, **schema awareness**, and **persistent configuration**.
