@@ -1,6 +1,46 @@
 # SnapBase Troubleshooting Guide
 
-## 🚨 Common Issues & Solutions
+## Table of Contents
+
+- [Installation Issues](#installation-issues)
+- [Runtime Issues](#runtime-issues)
+- [Configuration Issues](#configuration-issues)
+- [Platform-Specific Issues](#platform-specific-issues)
+- [Docker Alternative](#docker-alternative)
+- [Debug Checklist](#debug-checklist)
+- [Getting Help](#getting-help)
+- [Performance Optimization](#performance-optimization)
+- [Verification Checklist](#verification-checklist)
+
+## Troubleshooting Decision Tree
+
+```mermaid
+flowchart TD
+    A[Issue Encountered] --> B{Installation or Runtime?}
+    B -->|Installation| C{Error Type?}
+    B -->|Runtime| D{Error Type?}
+    
+    C -->|Python/Pip| E[Check Python Installation]
+    C -->|MySQL Connector| F[Install MySQL Client Dev Files]
+    C -->|Permissions| G[Use Virtual Environment]
+    
+    D -->|Database Connection| H[Verify Database Config]
+    D -->|API Key| I[Validate API Credentials]
+    D -->|Query/SQL| J[Check LLM Response]
+    
+    E --> K[Verify Installation]
+    F --> K
+    G --> K
+    H --> K
+    I --> K
+    J --> K
+    
+    K --> L{Issue Resolved?}
+    L -->|Yes| M[Success]
+    L -->|No| N[Try Docker Alternative]
+```
+
+## Common Issues and Solutions
 
 ### Installation Issues
 
@@ -78,6 +118,19 @@ pip install -e .
 ### Runtime Issues
 
 #### Problem 5: "Cannot connect to database"
+
+```mermaid
+flowchart LR
+    A[Connection Failed] --> B{Server Running?}
+    B -->|No| C[Start MySQL Server]
+    B -->|Yes| D{Credentials Correct?}
+    D -->|No| E[Update Config]
+    D -->|Yes| F{Firewall Blocking?}
+    F -->|Yes| G[Configure Firewall]
+    F -->|No| H{Network Reachable?}
+    H -->|No| I[Check Network/VPN]
+    H -->|Yes| J[Check Logs]
+```
 
 **Checklist:**
 - [ ] Is MySQL/MariaDB server running?
@@ -268,7 +321,16 @@ docker-compose up
 
 ---
 
-## 🔍 Debug Checklist
+## Debug Checklist
+
+```mermaid
+flowchart TD
+    A[Debug Process] --> B[Gather System Info]
+    B --> C[Test Connectivity]
+    C --> D[Check Logs]
+    D --> E[Verify Environment]
+    E --> F[Generate Report]
+```
 
 When reporting issues, please gather:
 
@@ -297,7 +359,7 @@ systeminfo  # Windows
 
 ---
 
-## 📞 Getting Help
+## Getting Help
 
 If issues persist:
 
@@ -309,7 +371,15 @@ If issues persist:
 
 ---
 
-## 🚀 Performance Optimization
+## Performance Optimization
+
+```mermaid
+flowchart LR
+    A[Performance Issue] --> B[Increase Timeouts]
+    A --> C[Enable Connection Pooling]
+    A --> D[Cache Schema Info]
+    A --> E[Optimize Database Indexes]
+```
 
 If SnapBase is slow:
 
@@ -330,7 +400,7 @@ API_TIMEOUT=60
 
 ---
 
-## ✅ Verification Checklist
+## Verification Checklist
 
 After installation, verify:
 
@@ -345,5 +415,4 @@ After installation, verify:
 
 ---
 
-**Last Updated:** December 24, 2025  
-**SnapBase Version:** 1.0.0
+
