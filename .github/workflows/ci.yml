@@ -1,0 +1,168 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+jobs:
+  lint:
+    name: Code Quality & Linting
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install black flake8 mypy bandit safety
+    
+    - name: Run Black (Code Formatter Check)
+      run: black --check --diff .
+      continue-on-error: true
+    
+    - name: Run Flake8 (Linter)
+      run: flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+      continue-on-error: true
+    
+    - name: Run Flake8 (Complexity & Style)
+      run: flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    
+    - name: Run Bandit (Security Scanner)
+      run: bandit -r app/ config/ db/ llm/ utils/ -f json -o bandit-report.json
+      continue-on-error: true
+    
+    - name: Upload Bandit Report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: bandit-security-report
+        path: bandit-report.json
+        retention-days: 30
+
+  test:
+    name: Test on Python ${{ matrix.python-version }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ['3.9', '3.10', '3.11', '3.12']
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+        cache: 'pip'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest pytest-cov
+    
+    - name: Verify installation
+      run: |
+        python --version
+        pip list
+    
+    - name: Check imports
+      run: |
+        python -c "import app; import config; import db; import llm; import utils"
+    
+    - name: Run tests (if tests exist)
+      run: |
+        if [ -d "tests" ] || compgen -G "*test*.py" > /dev/null; then
+          pytest --verbose --cov=. --cov-report=xml --cov-report=term
+        else
+          echo "No tests found, skipping test execution"
+        fi
+      shell: bash
+      continue-on-error: true
+    
+    - name: Upload coverage to Codecov
+      if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.11'
+      uses: codecov/codecov-action@v4
+      with:
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+      continue-on-error: true
+
+  dependency-security:
+    name: Dependency Security Check
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install safety
+        pip install -r requirements.txt
+    
+    - name: Run Safety Check
+      run: safety check --json --output safety-report.json
+      continue-on-error: true
+    
+    - name: Upload Safety Report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: safety-dependency-report
+        path: safety-report.json
+        retention-days: 30
+
+  build:
+    name: Build Package
+    runs-on: ubuntu-latest
+    needs: [lint, test]
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+    
+    - name: Install build dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install build wheel setuptools
+    
+    - name: Build package
+      run: python -m build
+    
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: dist-package
+        path: dist/
+        retention-days: 30
+    
+    - name: Check package
+      run: |
+        pip install twine
+        twine check dist/*
