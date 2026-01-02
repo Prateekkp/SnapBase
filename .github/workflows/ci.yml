@@ -44,7 +44,7 @@ jobs:
     
     - name: Upload Bandit Report
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: bandit-security-report
         path: bandit-report.json
@@ -127,7 +127,7 @@ jobs:
     
     - name: Upload Safety Report
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: safety-dependency-report
         path: safety-report.json
@@ -156,7 +156,7 @@ jobs:
       run: python -m build
     
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: dist-package
         path: dist/
