@@ -175,25 +175,34 @@ snapbase/
 
 ### Setup Instructions
 
-#### 1. Clone Repository
+#### Option A: One-command install (latest)
+
+```bash
+pip install -U git+https://github.com/Prateekkp/SnapBase.git
+```
+
+This installs the latest code from GitHub and registers the `snapbase` command.
+
+#### Option B: Editable install (for development)
 
 ```bash
 git clone https://github.com/Prateekkp/SnapBase.git
-cd snapbase
-```
-
-#### 2. Install Dependencies
-
-```bash
+cd SnapBase
 pip install -e .
 ```
 
-This registers the `snapbase` command globally in your environment.
+Use this if you plan to modify the source locally.
 
 #### 3. Verify Installation
 
 ```bash
 snapbase --version
+```
+
+#### Update to latest
+
+```bash
+pip install -U git+https://github.com/Prateekkp/SnapBase.git
 ```
 
 ## Usage

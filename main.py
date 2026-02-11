@@ -6,6 +6,7 @@ from db.schema import list_databases, get_database_schema
 from app.cli import start_cli
 import sys
 import os
+from importlib.metadata import PackageNotFoundError, version
 
 
 def secure_input(prompt=""):
@@ -51,7 +52,18 @@ def secure_input(prompt=""):
     return password
 
 
+def get_version_string():
+    try:
+        return version("snapbase")
+    except PackageNotFoundError:
+        return "unknown (package not installed)"
+
+
 def main():
+    if any(arg in ("-V", "--version") for arg in sys.argv[1:]):
+        print(get_version_string())
+        return
+
     show_banner()
     config = load_config()
 
